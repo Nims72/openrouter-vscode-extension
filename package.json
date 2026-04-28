@@ -1,0 +1,91 @@
+{
+  "name": "openrouter-vscode",
+  "displayName": "OpenRouter Server",
+  "description": "Toggle the free-claude-code Anthropic proxy server and inject terminal environment variables",
+  "version": "0.0.1",
+  "publisher": "nimrodim",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "openrouter.toggle",
+        "title": "OpenRouter: Toggle Proxy Server"
+      }
+    ],
+    "configuration": {
+      "title": "OpenRouter",
+      "properties": {
+        "openrouter.apiKey": {
+          "order": 1,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "OpenRouter API key injected as `OPENROUTER_API_KEY` into terminals"
+        },
+        "openrouter.modelOpus": {
+          "order": 2,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Model used for Claude Opus requests. Format: `provider/model-name` — e.g. `open_router/anthropic/claude-opus-4`. Falls back to `#openrouter.model#` if empty."
+        },
+        "openrouter.modelSonnet": {
+          "order": 3,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Model used for Claude Sonnet requests. Format: `provider/model-name` — e.g. `open_router/anthropic/claude-sonnet-4-5`. Falls back to `#openrouter.model#` if empty."
+        },
+        "openrouter.modelHaiku": {
+          "order": 4,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Model used for Claude Haiku requests. Format: `provider/model-name` — e.g. `open_router/anthropic/claude-haiku-4-5`. Falls back to `#openrouter.model#` if empty."
+        },
+        "openrouter.model": {
+          "order": 5,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Fallback model used for all Claude requests that don't match a specific tier override. Format: `provider/model-name` — e.g. `open_router/meta-llama/llama-3.1-8b-instruct:free`. Valid providers: `nvidia_nim`, `open_router`, `lmstudio`. Leave empty to use the server's built-in default (`nvidia_nim/meta/llama3-70b-instruct`)."
+        },
+        "openrouter.port": {
+          "order": 6,
+          "type": "number",
+          "default": 8082,
+          "markdownDescription": "Port on which uvicorn will listen"
+        },
+        "openrouter.serverPath": {
+          "order": 7,
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Absolute path to the proxy server directory. Leave empty to use the bundled `server/` folder included with this extension."
+        },
+        "openrouter.autoStartServer": {
+          "order": 8,
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Automatically start the uvicorn server when the toggle is enabled"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "deploy": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.0",
+    "@vscode/vsce": "^3.0.0"
+  }
+}

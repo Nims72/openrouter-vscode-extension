@@ -1,0 +1,26 @@
+# Claude Code local config
+.claude/
+
+# Node
+node_modules/
+
+# Compiled output
+out/
+
+# Packaged extension
+*.vsix
+
+# VS Code test artifacts
+.vscode-test/
+
+# Python virtual environment
+server/.venv/
+
+# Python bytecode
+server/**/__pycache__/
+server/**/*.pyc
+
+# Server runtime files (secrets & logs)
+server/.env
+server/server.log
+server/.active_model.json
