@@ -10,6 +10,7 @@ const STATE_KEY = 'openrouter.enabled';
 
 let serverManagerInstance: ServerManager | undefined;
 let activeModel: string | undefined;
+let activeTier: string | undefined;
 
 export function activate(context: vscode.ExtensionContext): void {
   const outputChannel = vscode.window.createOutputChannel('OpenRouter Server');
@@ -24,16 +25,16 @@ export function activate(context: vscode.ExtensionContext): void {
   serverManagerInstance = new ServerManager(
     outputChannel,
     (newStatus: ServerStatus) => {
-      const isEnabled = context.globalState.get<boolean>(STATE_KEY, false);
+      const isEnabled = context.workspaceState.get<boolean>(STATE_KEY, false);
       const settings  = getSettings(context.extensionPath);
-      statusBar.update(isEnabled, newStatus, settings);
+      statusBar.update(isEnabled, newStatus, settings, activeModel, activeTier);
     }
   );
 
   context.subscriptions.push({ dispose: () => statusBar.dispose() });
 
   // Restore persisted toggle state
-  const wasEnabled = context.globalState.get<boolean>(STATE_KEY, false);
+  const wasEnabled = context.workspaceState.get<boolean>(STATE_KEY, false);
   if (wasEnabled) {
     const settings = getSettings(context.extensionPath);
     outputChannel.appendLine(`[Extension] extensionPath: ${context.extensionPath}`);
@@ -43,7 +44,7 @@ export function activate(context: vscode.ExtensionContext): void {
     if (settings.autoStartServer) {
       serverManagerInstance.start(settings);
     }
-    statusBar.update(true, serverManagerInstance.status, settings);
+    statusBar.update(true, serverManagerInstance.status, settings, activeModel, activeTier);
   } else {
     statusBar.update(false, 'stopped');
   }
@@ -60,9 +61,10 @@ export function activate(context: vscode.ExtensionContext): void {
           const raw = fs.readFileSync(activeModelFile, 'utf8');
           const data = JSON.parse(raw) as { model: string; tier: string };
           activeModel = data.model;
-          const isEnabled = context.globalState.get<boolean>(STATE_KEY, false);
+          activeTier  = data.tier;
+          const isEnabled = context.workspaceState.get<boolean>(STATE_KEY, false);
           if (isEnabled) {
-            statusBar.update(true, serverManagerInstance?.status ?? 'running', getSettings(context.extensionPath), activeModel);
+            statusBar.update(true, serverManagerInstance?.status ?? 'running', getSettings(context.extensionPath), activeModel, activeTier);
           }
         } catch { /* file not ready yet */ }
       });
@@ -73,19 +75,20 @@ export function activate(context: vscode.ExtensionContext): void {
     modelWatcher?.close();
     modelWatcher = undefined;
     activeModel  = undefined;
+    activeTier   = undefined;
   }
 
   context.subscriptions.push({ dispose: () => stopModelWatcher() });
 
-  if (context.globalState.get<boolean>(STATE_KEY, false)) {
+  if (context.workspaceState.get<boolean>(STATE_KEY, false)) {
     startModelWatcher();
   }
 
   const toggleCommand = vscode.commands.registerCommand('openrouter.toggle', async () => {
-    const current = context.globalState.get<boolean>(STATE_KEY, false);
+    const current = context.workspaceState.get<boolean>(STATE_KEY, false);
     const next    = !current;
 
-    await context.globalState.update(STATE_KEY, next);
+    await context.workspaceState.update(STATE_KEY, next);
 
     if (next) {
       const settings = getSettings(context.extensionPath);
@@ -111,7 +114,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
     if (!e.affectsConfiguration('openrouter')) { return; }
 
-    const isEnabled = context.globalState.get<boolean>(STATE_KEY, false);
+    const isEnabled = context.workspaceState.get<boolean>(STATE_KEY, false);
     if (!isEnabled) { return; }
 
     const settings = getSettings(context.extensionPath);

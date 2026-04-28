@@ -34,7 +34,7 @@ export class StatusBarManager {
     this.item.show();
   }
 
-  update(enabled: boolean, status: ServerStatus, settings?: OpenRouterSettings, activeModel?: string): void {
+  update(enabled: boolean, status: ServerStatus, settings?: OpenRouterSettings, activeModel?: string, activeTier?: string): void {
     this.item.tooltip = buildTooltip(enabled, status, settings);
 
     if (!enabled) {
@@ -44,13 +44,10 @@ export class StatusBarManager {
       return;
     }
 
-    // Prefer the live model reported by the server; fall back to configured model
-    const displayModel = activeModel
-      ? shortName(activeModel)
-      : settings
-        ? shortName(settings.modelSonnet || settings.modelOpus || settings.modelHaiku || settings.model)
-        : '';
-    const modelSuffix = displayModel ? ` ${displayModel}` : '';
+    // Only show model info after the first proxy request has been made
+    const displayModel = activeModel ? shortName(activeModel) : '';
+    const tierLabel  = activeTier ? `${activeTier.charAt(0).toUpperCase() + activeTier.slice(1)} · ` : '';
+    const modelSuffix = displayModel ? ` ${tierLabel}${displayModel}` : '';
 
     switch (status) {
       case 'starting':
