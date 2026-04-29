@@ -4,6 +4,10 @@
   "description": "Toggle the free-claude-code Anthropic proxy server and inject terminal environment variables",
   "version": "0.0.1",
   "publisher": "nimrodim",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nims72/openrouter-vscode-extension"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },

@@ -1,13 +1,45 @@
+# Dev tooling
 .vscode/**
 .vscode-test/**
-src/**
 .gitignore
 .eslintrc.json
 tsconfig.json
+CLAUDE.md
+.claude/**
+
+# TypeScript source (compiled output in out/ is what ships)
+src/**
 **/*.ts
 **/*.map
 !out/**
-!server/**
+
+# Node
 node_modules/**
-server/**/__pycache__
+
+# Python virtual environment (large; uv creates it on first run)
+server/.venv/**
+
+# Tests
+server/tests/**
+
+# Python cache
+server/**/__pycache__/**
 server/**/*.pyc
+
+# Dev/editor config
+server/.claude/**
+server/.cursor/**
+server/.serena/**
+server/.ruff_cache/**
+server/.pytest_cache/**
+
+# Secrets and logs
+server/.env
+server/server.log
+server/.active_model.json
+
+# Agent workspace
+server/agent_workspace/**
+
+# Lock file (not needed at runtime; uv resolves deps from pyproject.toml)
+server/uv.lock
