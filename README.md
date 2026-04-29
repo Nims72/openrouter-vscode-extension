@@ -286,7 +286,7 @@ If you opened the terminal before toggling on, close it and open a new one.
 
 ## License
 
-[Specify your license, e.g., MIT, Apache 2.0, etc.]
+MIT — see [LICENSE](LICENSE) for details. Portions of the bundled server are derived from [free-claude-code](https://github.com/Alishahryar1/free-claude-code) by Alishahryar1, also MIT licensed.
 
 ## Contributing
 
